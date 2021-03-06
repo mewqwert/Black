@@ -7,13 +7,15 @@
 Encoder myEnc_L(2, 12); // Encoder of Motor left
 Encoder myEnc_R(3, 13); // Encoder of Motor Right
 const int PPR = 1881; // pulse per rotation of motor
+const float r = 0.005; // radius of wheel
 long oldPosition_L  = -999;
 long oldPosition_R  = -999;
 long newPosition_L;
 long newPosition_R;
 long Pulse_L = 0;
 long Pulse_R = 0;
-long Time_start = micros();
+long rpm_L = 0;
+long rpm_R = 0;
 
 ros::NodeHandle nh;
 
@@ -52,6 +54,7 @@ void setup() {
   V_L_msg.data = 0;
   V_R_msg.data = 0;
 } 
+long Time_start = micros();
 
 void loop() {
   newPosition_L = myEnc_L.read();
@@ -70,8 +73,10 @@ void loop() {
     }
   float dt = (float)((micros() - Time_start)/1000000);
   if (dt > 1) {
-    V_L_msg.data = (Pulse_L/PPR)*60/dt;
-    V_R_msg.data = (Pulse_R/PPR)*60/dt;
+    rpm_L = (Pulse_L/PPR)*60/dt;
+    rpm_R = (Pulse_R/PPR)*60/dt;
+    V_L_msg.data = rpm_L * 2*3.14/60 * r;
+    V_R_msg.data = rpm_R * 2*3.14/60 * r;
     Pulse_L = 0;
     Pulse_R = 0;
     Time_start = micros();
