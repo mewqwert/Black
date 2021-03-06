@@ -51,6 +51,8 @@ void setup() {
   nh.subscribe(Motor_R);
   nh.advertise(EncL);
   nh.advertise(EncR);
+  nh.advertise(Velocity_L);
+  nh.advertise(Velocity_R);
   V_L_msg.data = 0;
   V_R_msg.data = 0;
 } 
@@ -58,7 +60,7 @@ long Time_start = micros();
 
 void loop() {
   newPosition_L = myEnc_L.read();
-  newPosition_R = myEnc_R.read()*-1;
+  newPosition_R = myEnc_R.read();
   
   
   if (newPosition_L != oldPosition_L) {
